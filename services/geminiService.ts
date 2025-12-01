@@ -4,7 +4,7 @@ import { PRODUCTS } from '../constants';
 let chatSession: Chat | null = null;
 
 const formatProductContext = () => {
-  return PRODUCTS.map(p => 
+  return PRODUCTS.map(p =>
     `- ${p.name} ($${p.price}): ${p.description} [Features: ${p.features.join(', ')}]`
   ).join('\n');
 };
@@ -27,12 +27,12 @@ Guidelines:
 
 export const getChatResponse = async (userMessage: string): Promise<string> => {
   try {
-    if (!process.env.API_KEY) {
+    if (!import.meta.env.VITE_API_KEY) {
       return "I'm currently offline (API Key missing). Please check back later!";
     }
 
     if (!chatSession) {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
       chatSession = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: {
@@ -43,9 +43,9 @@ export const getChatResponse = async (userMessage: string): Promise<string> => {
     }
 
     const response: GenerateContentResponse = await chatSession.sendMessage({
-        message: userMessage
+      message: userMessage
     });
-    
+
     return response.text || "I didn't catch that. Could you rephrase?";
   } catch (error) {
     console.error("Gemini API Error:", error);
